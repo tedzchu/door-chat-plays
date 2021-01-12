@@ -315,7 +315,7 @@ def sync():
 # -------------------------------------------------------------------------
 
 
-host = "192.168.86.21"
+host = "127.0.0.1"
 port = 5005
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Internet  # UDP
