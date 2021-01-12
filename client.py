@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 import socket
 import json
+import auth
+from twitchio.ext import commands
 
 BUTTON_NONE = 0x00
 BUTTON_Y = 0x01
@@ -37,8 +39,25 @@ STICK_MAX = 1.0
 
 config = None
 
-with open("./config.json") as f:
+with open("./commands.json") as f:
     config = json.load(f)
+
+
+class Bot(commands.Bot):
+    def __init__(self):
+        super().__init__(
+            irc_token=auth.TOKEN,
+            client_id=auth.CLIENT_ID,
+            nick=auth.CHANNEL_NAME,
+            prefix="!",
+            initial_channels=[auth.CHANNEL_NAME],
+        )
+
+    async def event_ready(self):
+        print(f"Ready | {self.nick}")
+
+    async def event_message(self, message):
+        await twitch_plays(message.content.upper())
 
 
 class Packet:
@@ -85,21 +104,19 @@ class Packet:
         )
 
 
-# host = "192.168.86.21"
 host = "127.0.0.1"
 port = 5005
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-default_packet = Packet()
 
-while True:
-    message = input("Please enter a command: ").encode()
-    if len(message) > 0 & (message in config):
+async def twitch_plays(message):
+    if message in config.keys():
         packet = Packet()
-        message = message.decode().upper()
         exec(config[message])
         steve = packet.generate_bytes()
         sock.sendto(steve, (host, port))
 
-# twitch chat > client.py > config.json > client.py > server.py > serial > arduino > $$$
+
+bot = Bot()
+bot.run()
