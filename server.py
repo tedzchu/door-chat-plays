@@ -262,13 +262,14 @@ def cmd_to_packet(command):
     right_x, right_y = angle(rstick_angle, rstick_intensity)
 
     packet = [high, low, dpad, left_x, left_y, right_x, right_y, 0x00]
-    print(packet)
     # print (hex(command), packet, lstick_angle, lstick_intensity, rstick_angle, rstick_intensity)
     return packet
 
 
 # Send a formatted controller command to the MCU
 def send_cmd(command=NO_INPUT):
+    if isinstance(command, int):
+        return send_packet()
     commandSuccess = send_packet(command)
     # commandSuccess = send_packet(cmd_to_packet(command))
     return commandSuccess
@@ -314,20 +315,11 @@ def sync():
 # -------------------------------------------------------------------------
 
 
-host = "127.0.0.1"
+host = "192.168.86.21"
 port = 5005
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)  # Internet  # UDP
 sock.bind((host, port))
-
-while True:
-    data, addr = sock.recvfrom(1024)
-    if data:
-        send_cmd([byte for byte in data])
-        # send_cmd(BTN_A)
-        # p_wait(0.5)
-        # send_cmd()
-        # p_wait(0.001)
 
 ser = serial.Serial(port=args.port, baudrate=19200, timeout=1)
 
@@ -335,12 +327,18 @@ ser = serial.Serial(port=args.port, baudrate=19200, timeout=1)
 if not sync():
     print("Could not sync!")
 
-if not send_cmd(BTN_A + DPAD_U_R + LSTICK_U + RSTICK_D_L):
-    print("Packet Error!")
-
 p_wait(0.05)
 
 if not send_cmd():
     print("Packet Error!")
+
+while True:
+    data, addr = sock.recvfrom(1024)
+    if data:
+        send_cmd([byte for byte in data])
+        p_wait(0.1)
+        send_cmd()
+        p_wait(0.001)
+
 
 ser.close
