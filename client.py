@@ -34,12 +34,9 @@ STICK_MIN = -1.0
 STICK_CENTER = 0.0
 STICK_MAX = 1.0
 
-# left stick - "move [direction]"
-# right stick - "look [direction]"
-
 config = None
 
-with open("./commands.json") as f:
+with open("./config.json") as f:
     config = json.load(f)
 
 
@@ -111,11 +108,20 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 async def twitch_plays(message):
-    if message in config.keys():
-        packet = Packet()
-        exec(config[message])
-        steve = packet.generate_bytes()
-        sock.sendto(steve, (host, port))
+    packet = Packet()
+    command = message
+    duration = 4  # in frames to press
+    if message.startswith("HOLD "):
+        command = message[5:]
+        duration += 4
+    elif message.startswith("TAP "):
+        command = message[4:]
+        duration -= 3
+    if command in config.keys():
+        exec(config[command])
+        command_as_bytes = packet.generate_bytes()
+        for _ in range(duration):
+            sock.sendto(command_as_bytes, (host, port))
 
 
 bot = Bot()
