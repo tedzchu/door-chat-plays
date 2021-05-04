@@ -124,15 +124,18 @@ async def twitch_plays(message):
         duration -= 3
     elif message.startswith("ZOOM "):  # separate zoom check to accept multiple commands
         command = message[5:]
-        packet.press_button("BUTTON_L")
+        packet.press_button(BUTTON_L)
         zooming = False
     if command in config.keys():
+        _locals = locals()  # make copy of local dict
         if zooming:
-            packet.press_button("BUTTON_L")
+            packet.press_button(BUTTON_L)
             zooming = False
-        exec(config[command])
+        exec(config[command], globals(), _locals)
+        duration = _locals["duration"]  # update duration from exec
         command_as_bytes = packet.generate_bytes()
         for _ in range(duration):
+            print(duration)
             sock.sendto(command_as_bytes, (host, port))
 
 
