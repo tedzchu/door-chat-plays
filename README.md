@@ -13,6 +13,8 @@ Implementation by [@it_door](https://twitch.tv/it_door)
 
 Client and server can live on separate machines. Make sure to set up your Twitch OAuth token in `auth.py`. All of the firmware was taken care of for me thanks to [javmarina](https://github.com/javmarina/Nintendo-Switch-Remote-Control/tree/master/firmware).
 
+Add different configs for your games in the `config` folder. Run the client of your choice, replacing line 41 `with open("../config/default.json") as f:` with the config file of your choice. Currently New Pokemon Snap uses a custom `snap` client iteration to handle camera zooms better.
+
 ## TODO
 
 - Clean up unused server code

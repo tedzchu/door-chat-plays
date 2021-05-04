@@ -38,7 +38,7 @@ INITIAL_FRAMES = 4
 
 config = None
 
-with open("./config/default.json") as f:
+with open("../config/default.json") as f:
     config = json.load(f)
 
 
