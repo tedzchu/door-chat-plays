@@ -34,9 +34,11 @@ STICK_MIN = -1.0
 STICK_CENTER = 0.0
 STICK_MAX = 1.0
 
+INITIAL_FRAMES = 4
+
 config = None
 
-with open("./config.json") as f:
+with open("./config/default.json") as f:
     config = json.load(f)
 
 
@@ -110,7 +112,7 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 async def twitch_plays(message):
     packet = Packet()
     command = message
-    duration = 4  # in frames to press
+    duration = INITIAL_FRAMES  # in frames to press
     if message.startswith("HOLD "):
         command = message[5:]
         duration += 4
