@@ -1,6 +1,6 @@
 # Twitch Plays Nintendo Switch
 
-Implementation by [@it_door](https://twitch.tv/it_door)
+Implementation by [@doorDoes](https://twitch.tv/doorDoes)
 
 ## Prerequisites
 
